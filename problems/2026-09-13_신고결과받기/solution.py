@@ -30,14 +30,41 @@ def solution(id_list, report, k):
     return answer
 
 
+# v2 (2026-10-10 재풀이): import 없이 카운트 dict 두 개로 단계별 집계 — 시험장 기본 템플릿
+def solution_v2(id_list, report, k):
+    # 같은 사람이 같은 사람을 여러 번 신고한 건 1번으로
+    report = set(report)
+    # 1단계: 각 유저가 몇 번 신고당했는지 세기
+    count = {}
+    for user in id_list:
+        count[user] = 0
+    for r in report:
+        a, b = r.split()
+        count[b] += 1
+    # 2단계: 정지된 사람(k번 이상)을 신고한 사람에게 메일 +1
+    mail = {}
+    for user in id_list:
+        mail[user] = 0
+    for r in report:
+        a, b = r.split()
+        if count[b] >= k:
+            mail[a] += 1
+    # 3단계: id_list 순서대로 결과 만들기
+    answer = []
+    for user in id_list:
+        answer.append(mail[user])
+    return answer
+
+
 if __name__ == "__main__":
-    print(solution(
-        ["muzi", "frodo", "apeach", "neo"],
-        ["muzi frodo", "apeach frodo", "frodo neo", "muzi neo", "apeach muzi"],
-        2,
-    ))  # [2, 1, 1, 0]
-    print(solution(
-        ["con", "ryan"],
-        ["ryan con", "ryan con"],
-        3,
-    ))  # [0, 0]
+    for f in (solution, solution_v2):
+        print(f(
+            ["muzi", "frodo", "apeach", "neo"],
+            ["muzi frodo", "apeach frodo", "frodo neo", "muzi neo", "apeach muzi"],
+            2,
+        ))  # [2, 1, 1, 0]
+        print(f(
+            ["con", "ryan"],
+            ["ryan con", "ryan con"],
+            3,
+        ))  # [0, 0]
